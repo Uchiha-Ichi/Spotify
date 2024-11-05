@@ -6,20 +6,15 @@ var bodyParser = require("body-parser");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 dotenv.config();
+app.use(express.json());
 
-const { Accounts, Albums, Songs, Types, Loves, Listens, PlayLists } = require("./model/model");
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(cors());
+app.use(morgan("common"));
 
-// 1. Tạo một tài khoản mới
-const newAccount = new Accounts({
-    id_account: "HuanRose",
-    email: "rose@gmail.com",
-    account_name: "Huan Hoa Hong",
-    avatar: null,
-    password: "123456",
-    create_date: new Date(),
-    role: "Singer"
-});
 
+const authRoute = require("./routes/auth.route")
+app.use("/v1/auth", authRoute);
 
 
 //connect DB
@@ -37,13 +32,23 @@ async function connectDB() {
 
 connectDB();
 
-newAccount.save()
-    .then(account => console.log("Account saved:", account))
-    .catch(error => console.error("Error saving account:", error));
-
-app.use(bodyParser.json({ limit: "50mb" }));
-app.use(cors());
-app.use(morgan("common"));
 app.listen(8080, () => {
-    console.log("Server is running... ");
+    console.log("Server is running http://localhost:8080 ");
 });
+
+
+// app.set('view engine', 'ejs');
+// app.use(express.static("public"));
+// app.get('/', (req, res) => {
+//     res.render("home");
+// });
+// app.get("/login", (req, res) => {
+//     res.render("login");
+// });
+// app.get("/register", (req, res) => {
+//     res.render("register");
+// })
+
+//AUTHETICATION
+
+
