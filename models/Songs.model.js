@@ -41,3 +41,7 @@ const songSchema = new mongoose.Schema({
         ref: "PlayLists"
     }
 });
+
+let Songs = mongoose.model("Songs", typeSchema);
+
+module.exports = Songs;

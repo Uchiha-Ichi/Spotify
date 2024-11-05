@@ -10,7 +10,23 @@
 <body>
     <h1>Home</h1>
 
-    <p> <a href="/login">Login here</a></p>
+    <% if (cookies.username) { %>
+        <h2>Welcome, <%= cookies.username %>!</h2>
+        <p>Your email: <%= cookies.email %>
+        </p>
+        <% if (cookies.avatar) { %>
+            <img src="<%= cookies.avatar %>" alt="Avatar" />
+            <% } %>
+                <p>Your role as a singer: <%= cookies.singer==='true' ? "Yes" : "No" %>
+                </p> <!-- Kiểm tra giá trị singer -->
+                <p><a href="/auth/logout">Logout</a></p>
+
+                <% } else { %>
+                    <h2>Welcome, Guest!</h2>
+                    <p><a href="/auth/login">Login here</a></p>
+                    <% } %>
+
+
 </body>
 
 </html>

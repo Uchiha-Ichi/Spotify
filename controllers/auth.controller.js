@@ -17,10 +17,10 @@ const authController = {
             });
 
             const account = await newAccount.save();
-            res.status(200).json(account);
+            return res.redirect('/');
         } catch (err) {
             console.error("Error in registerAccount:", err);
-            res.status(500).json(err);
+            return res.redirect('/auth/register?error=Internal server error');
         }
     },
 
@@ -28,22 +28,37 @@ const authController = {
 
     loginAccount: async (req, res) => {
         try {
+            console.log(req.body);
             const account = await Accounts.findOne({ email: req.body.email });
+
             if (!account) {
-                res.status(403).json("Wrong email");
+                return res.redirect('/auth/login?error=Wrong email');
             }
             const validPassword = await bcrypt.compare(req.body.password, account.password);
 
             if (!validPassword) {
-                res.status(403).json("Wrong password");
+                return res.redirect('/auth/login?error=Wrong password');
             }
             if (account && validPassword) {
-                res.status(200).json(account);
+                res.cookie('username', account.account_name, { maxAge: 900000, httpOnly: true });
+                res.cookie('email', account.email, { maxAge: 900000, httpOnly: true });
+                res.cookie('avatar', account.avatar || '', { maxAge: 900000, httpOnly: true });
+                res.cookie('singer', account.singer, { maxAge: 900000, httpOnly: true });
+                return res.redirect('/');
             }
         } catch (err) {
             console.error("Error in registerAccount:", err);
-            res.status(500).json(err);
+            return res.redirect('/auth/login?error=Internal server error');
         }
+    },
+    logoutAccount: async (req, res) => {
+        res.clearCookie('username');
+        res.clearCookie('email');
+        res.clearCookie('avatar');
+        res.clearCookie('singer');
+
+
+        res.redirect('/');
     }
 };
 
